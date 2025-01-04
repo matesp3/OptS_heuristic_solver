@@ -13,10 +13,12 @@ public class TspSolver {
     public static void main(String[] args) {
         int[][] dij = loadDistanceMatrix(new File("files/mala_matica_dij.txt"));
         ITspHeuristic initSolExecutor = new TspSeqGrowthByNearest(dij);
-        int[] initSolutionPath = initSolExecutor.getSolutionPath();
-        SaForTsp tspSimAnnealing = new SaForTsp(null, initSolutionPath, dij);
-        tspSimAnnealing.solve();
-        tspSimAnnealing.printSolution();
+        initSolExecutor.solve();
+        int[] initSolutionPath = initSolExecutor.getSolutionRoute();
+        initSolExecutor.printSolution();
+//        SaForTsp tspSimAnnealing = new SaForTsp(null, initSolutionPath, dij);
+//        tspSimAnnealing.solve();
+//        tspSimAnnealing.printSolution();
     }
 
     private static int[][] loadDistanceMatrix(File file){
