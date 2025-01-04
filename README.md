@@ -1,0 +1,1 @@
+Semestrálna práca z predmetu Optimalizácia sietí. Riešenie problému obchodného cestujúceho TSP (Traveling Salesman Problem) získaním prípustného riešenia jednoduchou heuristikou a následné zlepšenie riešenia pomocou metaheuristiky Simulated Annealing (Simulácia zahrievania).
