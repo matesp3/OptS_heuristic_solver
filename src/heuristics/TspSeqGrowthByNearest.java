@@ -188,7 +188,7 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
             }
             i = j;
         } while (leastExt > 0 && i != this.sourceNode); // if extension is 0, no need to find better candidate
-        return new int[] { bestNode, extension };
+        return new int[] { bestNode, leastExt };
     }
 
     /**
@@ -202,6 +202,7 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
             nodeId = this.nodes[nodeId].next;
             i++;
         } while (nodeId != this.sourceNode);
+        this.x[i] = nodeId;
     }
 
     /**

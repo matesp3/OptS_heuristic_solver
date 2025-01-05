@@ -1,6 +1,7 @@
+import contracts.ITspChainOperation;
 import contracts.ITspHeuristic;
+import heuristics.ChainInversion;
 import heuristics.TspSeqGrowthByNearest;
-import metaheuristics.SaForTsp;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,6 +19,11 @@ public class TspSolver {
         initSolExecutor.solve();
         int[] initSolutionPath = initSolExecutor.getSolutionRoute();
         initSolExecutor.printSolution();
+        ITspChainOperation primaryHeur = new ChainInversion(initSolutionPath, 5, dij);
+        while (primaryHeur.hasNextModification()) {
+            int res = primaryHeur.nextModification();
+        }
+
 //        SaForTsp tspSimAnnealing = new SaForTsp(null, initSolutionPath, dij);
 //        tspSimAnnealing.solve();
 //        tspSimAnnealing.printSolution();
