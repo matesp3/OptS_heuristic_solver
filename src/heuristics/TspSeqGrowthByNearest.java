@@ -95,19 +95,15 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
     }
 
     public void printSolution() {
-        System.out.println("\n ----- * * *  S O L U T I O N   O U T P U T * * * -----");
-        System.out.println("Legend: ... -> [Number of node in route]: node ID -> ...");
+        System.out.print("\n TSP sequential growth heuristic result:\n  x = (");
         for (int i = 0; i < (this.x.length - 1); i++) {
             if (i != 0 && i % 22 == 0)
-                System.out.println();
-            System.out.printf(" [%d]:%s->"
-                    , (i+1)
-                    , (this.x[i] < 0 ? "?" : String.valueOf(this.x[i]))
-            );
+                System.out.print("\n      ");
+            System.out.printf("%s, ", (this.x[i] < 0 ? "?" : String.valueOf(this.x[i])));
         }
-        System.out.printf(" [1]:%s\n", (this.x[0] < 0 ? "?" : String.valueOf(this.x[0])));
-        System.out.println("    * TSP route length: " + this.routeLength);
-        System.out.println("    * Test of nodes presence: " + (this.verifyNodesPresence() ? "PASSED" : "FAILED!"));
+        System.out.printf("%s)\n", (this.x[0] < 0 ? "?" : String.valueOf(this.x[0])));
+        System.out.println("  * TSP route length: " + this.routeLength);
+        System.out.println("  * Test of nodes presence: " + (this.verifyNodesPresence() ? "PASSED" : "FAILED!"));
     }
 
     /**
