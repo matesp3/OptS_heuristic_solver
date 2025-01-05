@@ -38,6 +38,7 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
         this.M = distanceMatrix.length;
         this.dij = distanceMatrix.clone();
         this.x = new int[this.M + 1];
+        Arrays.fill(this.x, INVALID);
         this.nodes = new Node[this.M];
         for (int i = 0; i < this.nodes.length; i++) {
             this.nodes[i] = new Node(i);
@@ -56,6 +57,7 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
         this.nodes[i1].next = i2;
         this.nodes[i2].next = i3;
         this.nodes[i3].next = i1; // enclosing route by returning to the starting node (source)
+        this.updateRouteLength();
         // initialize list of not processed nodes
         List<Integer> notProcessed = new ArrayList<>(this.M - 3);
         for (int i = 0; i < this.nodes.length; i++) {
@@ -81,7 +83,8 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
             this.nodes[prev].next = bestNode;
             this.nodes[bestNode].next = next;
             this.routeLength += result[1];
-            notProcessed.remove(bestNode); // update not processed
+//            notProcessed.remove(new Integer(bestNode)); // update list - boxing needed in order to not take it as idx
+            removeIntByValue(notProcessed, bestNode); // update list
         }
         this.retrieveSolution(); // writes route to solution array 'x'
     }
@@ -94,15 +97,17 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
     public void printSolution() {
         System.out.println("\n ----- * * *  S O L U T I O N   O U T P U T * * * -----");
         System.out.println("Legend: ... -> [Number of node in route]: node ID -> ...");
-        for (int i = 0; i < this.x.length; i++) {
-            if (i % 22 == 0)
+        for (int i = 0; i < (this.x.length - 1); i++) {
+            if (i != 0 && i % 22 == 0)
                 System.out.println();
             System.out.printf(" [%d]:%s->"
                     , (i+1)
-                    , (this.x[i] == 0 ? "?" : String.valueOf(this.x[i]))
+                    , (this.x[i] < 0 ? "?" : String.valueOf(this.x[i]))
             );
         }
-        System.out.printf(" [1]:%s", (this.x[0] == 0 ? "?" : String.valueOf(this.x[0])));
+        System.out.printf(" [1]:%s\n", (this.x[0] < 0 ? "?" : String.valueOf(this.x[0])));
+        System.out.println("    * TSP route length: " + this.routeLength);
+        System.out.println("    * Test of nodes presence: " + (this.verifyNodesPresence() ? "PASSED" : "FAILED!"));
     }
 
     /**
@@ -150,6 +155,22 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
     }
 
     /**
+     * Recalculates length of current route.
+     */
+    private void updateRouteLength() {
+        if (this.sourceNode == -1)
+            return;
+        int node = this.sourceNode;
+        this.routeLength = 0;
+        int next;
+        do {
+            next = this.nodes[node].next;
+            this.routeLength += this.dij[node][next];
+            node = next;
+        } while (node != this.sourceNode);
+    }
+
+    /**
      * Finds the best pair of nodes between which should be specified <code>node</code> inserted. Determining condition
      * is to extend current route as least as possible.
      * @param node ID of node to insert to route
@@ -170,7 +191,7 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
                 bestNode = i;
             }
             i = j;
-        } while (i != this.sourceNode);
+        } while (leastExt > 0 && i != this.sourceNode); // if extension is 0, no need to find better candidate
         return new int[] { bestNode, extension };
     }
 
@@ -185,5 +206,37 @@ public class TspSeqGrowthByNearest implements ITspHeuristic {
             nodeId = this.nodes[nodeId].next;
             i++;
         } while (nodeId != this.sourceNode);
+    }
+
+    /**
+     * @return <code>true</code> or <code>false</code> whether all nodes of network are included in route of TSP.
+     */
+    private boolean verifyNodesPresence() {
+        for (int id = 0; id < this.M; id++) {
+            boolean found = false;
+            for (int j = 0; j < this.x.length - 1; j++) { // -1, bcs it is duplicate id of first node
+                if (this.x[j] == id) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * Instead of standard remove by object, because int was taken as index parameter.
+     * @param list
+     * @param value
+     */
+    private static void removeIntByValue(List<Integer> list, int value) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) == value) {
+                list.remove(i); // remove by index, when value is the same
+                return;
+            }
+        }
     }
 }

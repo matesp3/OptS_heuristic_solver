@@ -11,7 +11,9 @@ import java.util.StringTokenizer;
 public class TspSolver {
 
     public static void main(String[] args) {
-        int[][] dij = loadDistanceMatrix(new File("files/mala_matica_dij.txt"));
+        int[][] dij = loadDistanceMatrix(new File("files/mini_matica_dij.txt"));
+//        int[][] dij = loadDistanceMatrix(new File("files/matica_PO_(0664).txt"));
+
         ITspHeuristic initSolExecutor = new TspSeqGrowthByNearest(dij);
         initSolExecutor.solve();
         int[] initSolutionPath = initSolExecutor.getSolutionRoute();
