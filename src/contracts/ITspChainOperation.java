@@ -15,7 +15,7 @@ public interface ITspChainOperation {
      * Picks another parameters for different solution which is in set of solutions of current surrounding.
      * These parameters are saved within this instance.
      *
-     * @return received savings, if generated modification would be applied on current path
+     * @return new route length, if generated modification in this call would be applied on current route
      */
     public int nextModification();
 
@@ -25,8 +25,10 @@ public interface ITspChainOperation {
      */
     public void applyModification();
 
-    public int[] getSolutionPath();
+    public int[] getSolutionRoute();
 
-    public int getOverallDistance();
+    public int getRouteLength();
+
+    public String getHeuristicName();
 
 }

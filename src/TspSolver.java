@@ -2,6 +2,7 @@ import contracts.ITspChainOperation;
 import contracts.ITspHeuristic;
 import heuristics.ChainInversion;
 import heuristics.TspSeqGrowthByNearest;
+import metaheuristics.SaForTsp;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,21 +13,17 @@ import java.util.StringTokenizer;
 public class TspSolver {
 
     public static void main(String[] args) {
-        int[][] dij = loadDistanceMatrix(new File("files/mini_matica_dij.txt"));
-//        int[][] dij = loadDistanceMatrix(new File("files/matica_PO_(0664).txt"));
+//        int[][] dij = loadDistanceMatrix(new File("files/mala_matica_dij.txt"));
+        int[][] dij = loadDistanceMatrix(new File("files/matica_PO_(0664).txt"));
 
         ITspHeuristic initSolExecutor = new TspSeqGrowthByNearest(dij);
         initSolExecutor.solve();
         int[] initSolutionPath = initSolExecutor.getSolutionRoute();
         initSolExecutor.printSolution();
         ITspChainOperation primaryHeur = new ChainInversion(initSolutionPath, 5, dij);
-        while (primaryHeur.hasNextModification()) {
-            int res = primaryHeur.nextModification();
-        }
-
-//        SaForTsp tspSimAnnealing = new SaForTsp(null, initSolutionPath, dij);
-//        tspSimAnnealing.solve();
-//        tspSimAnnealing.printSolution();
+        SaForTsp tspSimAnnealing = new SaForTsp(primaryHeur);
+        tspSimAnnealing.solve();
+        tspSimAnnealing.printSolution();
     }
 
     private static int[][] loadDistanceMatrix(File file){

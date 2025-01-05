@@ -8,6 +8,7 @@ public class ChainInversion implements ITspChainOperation {
     private final int chainLen;
     private final int[] route; // valid route of TSP
     private final int[][] dij; // matrix of distances between each pair of nodes
+    private Random rand = new Random(15);
     private int seqStart; // index of sequence beginning node in route variable
     private int savings = Integer.MIN_VALUE;
     private int distance = 0;
@@ -41,14 +42,15 @@ public class ChainInversion implements ITspChainOperation {
     @Override
     public int nextModification() {
         // startIdx cannot be first and last index, because it's source node
-        this.seqStart++;
+//        this.seqStart++;
+        this.seqStart = this.rand.nextInt(this.route.length - this.chainLen - 1) + 1;
         int seqEnd = this.seqStart + this.chainLen - 1;
         int p = this.route[this.seqStart - 1];  // predecessor node of sequence start node
         int z = this.route[this.seqStart];      // sequence start node
         int k = this.route[seqEnd];             // sequence end node
         int n = this.route[seqEnd + 1];         // successor node of sequence end node
         this.savings = (this.dij[p][z] + this.dij[k][n]) - (this.dij[p][k] + this.dij[z][n]);
-        return this.savings;
+        return this.distance - this.savings;
     }
 
     @Override
@@ -63,16 +65,22 @@ public class ChainInversion implements ITspChainOperation {
             l++; r--;
         }
         this.distance -= this.savings;
+        this.seqStart = 0; // reset set of solutions of new surrounding
     }
 
     @Override
-    public int[] getSolutionPath() {
+    public int[] getSolutionRoute() {
         return this.route;
     }
 
     @Override
-    public int getOverallDistance() {
+    public int getRouteLength() {
         return this.distance;
+    }
+
+    @Override
+    public String getHeuristicName() {
+        return "Chain Inversion";
     }
 
     private void calcRouteDistance() {
